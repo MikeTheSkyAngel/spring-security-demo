@@ -1,13 +1,9 @@
-create table if not exists users (
-    username varchar(50) primary key,
+-- Accounts table
+create table if not exists accounts (
+    id serial primary key,
+    username varchar(100) not null,
     password varchar(255) not null,
-    enabled boolean default true,
-    created_at timestamp default current_timestamp
+    rol varchar(50) not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp
 );
-
-create table if not exists authorities (
-    username varchar(50) references users(username) on delete cascade,
-    authority varchar(50) not null
-);
-
-create unique index if not exists idx_auth_user on authorities(username, authority);
