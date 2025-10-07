@@ -1,7 +1,7 @@
 insert into accounts (username, password, rol) values
-('test_admin_user@testapp.com', '-635289258', 'USER'),
-('test_user_profile@testapp.com', '-635289258', 'PROFILE'),
-('mickey00184@gmail.com', '-635289258', 'USER');
+('test_admin_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC', 'USER'),
+('test_user_profile@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC', 'PROFILE'),
+('mickey00184@gmail.com', '$2a$10$YKo.6tlVmkXF2KETyEtR6OjG4qbSkQ.bh4V1kb5yPjmCyqKEQgJKy', 'USER');
 
 --insert into authorities (user_id, authority) values
 --(1, 'USER_READ'),
