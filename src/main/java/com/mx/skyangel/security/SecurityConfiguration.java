@@ -1,5 +1,6 @@
 package com.mx.skyangel.security;
 
+import com.mx.skyangel.filter.ApikeyFilter;
 import com.mx.skyangel.filter.CsrfCookieFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,8 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.addFilterBefore(new ApikeyFilter(), BasicAuthenticationFilter.class);
+
         var requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
