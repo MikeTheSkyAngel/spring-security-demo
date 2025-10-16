@@ -1,10 +1,10 @@
 package com.mx.skyangel.security;
 
 import com.mx.skyangel.filter.CsrfCookieFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfiguration {
 
     @Bean
@@ -27,8 +28,9 @@ public class SecurityConfiguration {
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
         http.authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/v1/*")
-                                .authenticated()
+                auth
+                        .requestMatchers("/v1/cards").hasRole("ADMIN")
+                        .requestMatchers("/v1/balance", "/v1/loans").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());

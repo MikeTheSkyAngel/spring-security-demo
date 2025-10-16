@@ -1,6 +1,6 @@
 package com.mx.skyangel.security;
 
-import com.mx.skyangel.repository.AccountRepository;
+import com.mx.skyangel.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,24 +11,25 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
 @Component
 @AllArgsConstructor
 public class UsernamePasswordAuthenticationProvider implements AuthenticationProvider {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         final var username = authentication.getName();
         final var password = authentication.getCredentials().toString();
-        final var accountDb = this.accountRepository.findByUsername(username);
-        final var account = accountDb.orElseThrow(() -> new BadCredentialsException("Invalid user credentials"));
+        final var userDb = this.userRepository.findByUsername(username);
+        final var user = userDb.orElseThrow(() -> new BadCredentialsException("Invalid user credentials"));
 
-        if (passwordEncoder.matches(password, account.getPassword())) {
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority(account.getRole()));
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            var authorities = user.getRoles()
+                    .stream()
+                    .map(auth -> new SimpleGrantedAuthority(auth.getName()))
+                    .toList();
             return new UsernamePasswordAuthenticationToken(username, password, authorities);
         } else {
             throw new BadCredentialsException("Invalid user credentials");

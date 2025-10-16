@@ -1,26 +1,17 @@
-insert into accounts (username, password, rol) values
-('test_admin_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC', 'USER'),
-('test_user_profile@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC', 'PROFILE'),
-('mickey00184@gmail.com', '$2a$10$YKo.6tlVmkXF2KETyEtR6OjG4qbSkQ.bh4V1kb5yPjmCyqKEQgJKy', 'USER');
+insert into users (username, password) values
+('account_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC'),
+('cards_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC'),
+('loans_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC'),
+('balance_user@testapp.com', '$2a$10$1FOuQWXXkOTCFGJgEiDjVuazXb50YFS5MfztMZpYbrkNCCKYEfJPC'),
+('mickey00184@gmail.com', '$2a$10$YKo.6tlVmkXF2KETyEtR6OjG4qbSkQ.bh4V1kb5yPjmCyqKEQgJKy');
 
---insert into authorities (user_id, authority) values
---(1, 'USER_READ'),
---(1, 'USER_WRITE'),
---(1, 'PROFILE_READ'),
---(1, 'PROFILE_WRITE'),
---(2, 'PROFILE_READ'),
---(2, 'PROFILE_WRITE'),
---(3, 'USER_READ'),
---(3, 'USER_WRITE'),
---(3, 'PROFILE_READ'),
---(3, 'PROFILE_WRITE');
---
---insert into profiles (user_id, full_name, date_of_birth, phone, address, city, country, zip_code, profile_picture_url) values
---(1, 'Test Main User', '2025-10-07', '1234567890', '123 Admin St', 'Admin City', 'Admin Country', '12345', null),
---(2, 'Test User Profile', '2025-10-07', '0m87654321', '456 Test Ave', 'Test City', 'Test Country', '67890', null),
---(3, 'Mickey Mouse', '1994-09-29', '5647678175', 'Ahorro Postal 45', 'Benito Juarez', 'Mexico', '03410', null);
---
---insert into profile_locale_settings (profile_id, language_code, country_code, date_format) values
---(1, 'en', 'US', 'MM/dd/yyyy'),
---(2, 'es', 'MX', 'dd/MM/yyyy'),
---(3, 'es', 'MX', 'dd/MM/yyyy');
+insert into roles (name, description) values
+('ROLE_ADMIN', 'Role for admin users'),
+('ROLE_USER', 'Role for regular users');
+
+insert into user_roles (user_id, role_id) values
+((select id from users where username = 'account_user@testapp.com'), (select id from roles where name = 'ROLE_ADMIN')),
+((select id from users where username = 'cards_user@testapp.com'), (select id from roles where name = 'ROLE_ADMIN')),
+((select id from users where username = 'loans_user@testapp.com'), (select id from roles where name = 'ROLE_USER')),
+((select id from users where username = 'balance_user@testapp.com'), (select id from roles where name = 'ROLE_USER')),
+((select id from users where username = 'mickey00184@gmail.com'), (select id from roles where name = 'ROLE_ADMIN'));
