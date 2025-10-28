@@ -1,4 +1,4 @@
-package com.mx.skyangel.security;
+package com.mx.skyangel.component;
 
 import com.mx.skyangel.repository.UserRepository;
 import lombok.AllArgsConstructor;

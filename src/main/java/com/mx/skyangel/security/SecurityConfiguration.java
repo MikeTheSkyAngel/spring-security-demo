@@ -1,12 +1,15 @@
 package com.mx.skyangel.security;
 
-import com.mx.skyangel.filter.ApikeyFilter;
 import com.mx.skyangel.filter.CsrfCookieFilter;
+import com.mx.skyangel.filter.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,25 +27,28 @@ import java.util.List;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.addFilterBefore(new ApikeyFilter(), BasicAuthenticationFilter.class);
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter) throws Exception {
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         var requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
         http.authorizeHttpRequests(auth ->
-                auth
-                        .requestMatchers("/v1/cards").hasRole("ADMIN")
-                        .requestMatchers("/v1/balance", "/v1/loans").hasAnyRole("ADMIN", "USER")
+                        auth
+                                .requestMatchers("/v1/cards").hasRole("ADMIN")
+                                .requestMatchers("/v1/balance", "/v1/loans").hasAnyRole("ADMIN", "USER")
                                 .anyRequest().permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
+
+        http.addFilterAfter(jwtTokenFilter, BasicAuthenticationFilter.class);
 
         http.cors(cors -> corsConfigurationSource());
 
         http.csrf(csrf -> csrf
                         .csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/welcome")
+                        .ignoringRequestMatchers("/welcome", "/about", "/v1/token")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class);
 
@@ -67,6 +73,11 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", config);
 
         return source;
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 
 }
