@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/v1/about")
+@RequestMapping(path = "/about")
 public class AboutController {
 
     @GetMapping
